@@ -1,29 +1,26 @@
 import React from 'react';
-/* import { useAtom } from 'jotai'; */
+import { useAtom } from 'jotai';
+import { daysAtom } from './viewState';
 import { useHistoricalAll } from 'api/covid-historical';
 import { AllChart } from './AllChart';
-/* import { daysAtom } from './viewState'; */
-import { useDaysStore } from './viewState';
 
 function AllChartContainer() {
-  const days: any = useDaysStore((state) => state.days);
+  const [days] = useAtom(daysAtom);
   const { status, data, error } = useHistoricalAll(days);
 
-  return (
-    <>
-      {(() => {
-        if (status === 'loading') {
-          return <div>Loading...</div>;
-        } else if (status === 'error') {
-          return <div>Error: {error}</div>;
-        } else if (!data) {
-          return null;
-        } else {
-          return <AllChart data={data} />;
-        }
-      })()}
-    </>
-  );
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'error') {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return <AllChart data={data} />;
 }
 
 export { AllChartContainer };
